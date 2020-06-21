@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+<body>
+  <input type="file"> 
+  <a id="download">Download</a>
+</body>
+
+<script>
+    //make access globally
+    var base64Str;
+    var arrBuf, newFile, url, mime;
+    const input = document.querySelector('input[type="file"]');
+    input.addEventListener('change',(e) => {
+        console.log(input.files);
+        const reader = new FileReader();
+        reader.onload = function () {
+          // const img = new Image();
+          // img.src = reader.result;
+          // base64Str = reader.result;
+          // document.body.appendChild(img);
+
+
+          if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, filename);
+          else{
+            mime = input.files[0].type;
+            arrBuf = reader.result;
+            console.log(reader.result);
+            newFile = new Blob([arrBuf],{
+              type: mime
+            })
+            const a = document.getElementById('download');
+            url = URL.createObjectURL(newFile);
+            a.setAttribute('href',url);
+            a.setAttribute('download',input.files[0].name)
+            // a.setAttribute('download','newImage.'+ mime.slice(6));
+
+            a.onclick = function(){
+              setTimeout(function() {
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);  
+            }, 0); 
+            }
+          }
+        }
+
+        //returns base64 encoded string
+        // reader.readAsDataURL(input.files[0])
+
+        reader.readAsArrayBuffer(input.files[0]);
+    })
+</script>
+
+</html>
